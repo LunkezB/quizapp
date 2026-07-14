@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "QuizApp MVP",
-  description: "Real-time quiz MVP foundation",
+  title: "QuizApp",
+  description: "Квиз в реальном времени: создавайте квизы и играйте с участниками с телефона.",
 };
 
 export default function RootLayout({
