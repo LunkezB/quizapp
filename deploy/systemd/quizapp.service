@@ -1,0 +1,49 @@
+# Alternative to Docker: run the same custom Node server directly on a host
+# via systemd. Chosen over PM2 for this MVP because it needs no extra
+# runtime dependency (no `npm install -g pm2`), reuses the OS's own
+# supervisor/logging (journalctl, `systemctl status`) that a solo VPS
+# deployment almost certainly already has, and gives the same guarantees
+# PM2 would (auto-restart, start-on-boot) via `Restart=` and `WantedBy=`
+# below. Use this path if you are NOT using docker-compose.prod.yml.
+#
+# Install:
+#   sudo cp deploy/systemd/quizapp.service /etc/systemd/system/quizapp.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now quizapp
+#
+# Logs:
+#   journalctl -u quizapp -f
+#
+# This unit does NOT run `prisma migrate deploy` itself (unlike the Docker
+# entrypoint) — run it once manually before (re)starting the service, see
+# deploy/DEPLOY.md.
+
+[Unit]
+Description=QuizApp (Next.js + Socket.IO custom server)
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+# Adjust to wherever the repo is checked out on the host.
+WorkingDirectory=/opt/quizapp
+# Loads DATABASE_URL, JWT_SECRET, NODE_ENV, PORT — same file used elsewhere
+# in this repo's deploy docs. Keep permissions on it at 600, owned by the
+# service user below.
+EnvironmentFile=/opt/quizapp/.env.production
+ExecStart=/usr/bin/npm run start:prod
+Restart=always
+RestartSec=5
+
+# Don't run the app as root.
+User=quizapp
+Group=quizapp
+
+# Light sandboxing; relax if it conflicts with your host's layout.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/quizapp
+
+[Install]
+WantedBy=multi-user.target

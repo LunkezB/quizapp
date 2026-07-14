@@ -1,0 +1,65 @@
+# Production compose file. Run it with the production env file explicitly,
+# so the same file drives both variable substitution below (--env-file) and
+# the app container's actual process environment (env_file:):
+#
+#   docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
+#
+# See deploy/DEPLOY.md for the full runbook.
+#
+# Explicit project name: without it, Compose derives the project name from
+# the directory ("quizapp"), same as docker-compose.yml (dev) — the two
+# would then fight over the same `postgres` service/container slot the
+# instant both get `up`'d from this repo on one machine (recreates the
+# other's container; the named data volume itself is untouched either way).
+name: quizapp-prod
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: quizapp:latest
+    container_name: quizapp-app
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    # Bind to loopback only: nginx on the host reverse-proxies to it. Drop
+    # the "127.0.0.1:" prefix only if you intentionally want the app
+    # reachable directly (e.g. no host nginx in front of it).
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: quizapp-postgres-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-quizapp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.production}
+      POSTGRES_DB: ${POSTGRES_DB:-quizapp}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-quizapp} -d ${POSTGRES_DB:-quizapp}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Intentionally no "ports:" mapping — postgres is only reachable from
+    # the app service over the internal compose network, matching the Rodex
+    # production convention of never exposing the database host-side.
+
+volumes:
+  postgres_prod_data:

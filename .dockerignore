@@ -1,0 +1,29 @@
+node_modules
+.next
+.git
+.github
+
+# local env files — never bake secrets into an image layer
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# local dev artifacts
+dev-server*.log
+*.tsbuildinfo
+next-env.d.ts
+
+# generated prisma client is (re)created by `prisma generate` during the build
+src/generated
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+.vscode
+.idea
+*.md
+!README.md
+docs

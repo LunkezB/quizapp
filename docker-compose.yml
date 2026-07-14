@@ -1,0 +1,28 @@
+# Explicit project name: without it, Compose derives the project name from
+# the directory ("quizapp") for every compose file in this repo, including
+# docker-compose.prod.yml — which then makes them fight over the same
+# `postgres` service/container slot. Named volumes are unaffected either way
+# (dev data isn't lost), but the container gets recreated out from under you.
+name: quizapp-dev
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: quizapp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: quizapp
+      POSTGRES_PASSWORD: quizapp
+      POSTGRES_DB: quizapp
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quizapp -d quizapp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
