@@ -129,34 +129,34 @@ export function PlayGameClient({ code, nickname }: PlayGameClientProps) {
 
   if (error) {
     return (
-      <div className="mx-auto max-w-md rounded-lg border border-red-200 bg-red-50 p-6 text-center" data-testid="play-error">
-        <p className="text-red-800">{error}</p>
+      <div className="mx-auto mt-10 max-w-md rounded-[12px] border border-pale-red-ink/20 bg-pale-red p-6 text-center" data-testid="play-error">
+        <p className="text-pale-red-ink">{error}</p>
       </div>
     );
   }
 
   if (!room) {
-    return <div className="mx-auto max-w-md p-6 text-center text-zinc-600">Подключение...</div>;
+    return <div className="mx-auto mt-10 max-w-md p-6 text-center text-muted">Подключение...</div>;
   }
 
   const remainingSec = room.deadline ? Math.max(0, Math.ceil((room.deadline - now) / 1000)) : 0;
 
   return (
-    <div className="mx-auto w-full max-w-2xl space-y-6 px-6 py-8">
-      <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-white p-4 shadow-sm">
-        <span className="text-sm text-zinc-600">{room.self?.nickname ?? nickname}</span>
-        <span className="font-semibold text-emerald-800" data-testid="own-score">
+    <div className="fade-up mx-auto w-full max-w-2xl space-y-5 px-5 py-8">
+      <div className="flex items-center justify-between rounded-[12px] border border-line bg-surface px-5 py-4 shadow-soft">
+        <span className="text-sm font-medium text-ink">{room.self?.nickname ?? nickname}</span>
+        <span className="text-base font-semibold tabular-nums text-ink" data-testid="own-score">
           {room.self?.score ?? 0} очков
         </span>
       </div>
 
-      <p className="text-center text-sm text-zinc-500" data-testid="play-status">
+      <p className="text-center text-xs uppercase tracking-[0.08em] text-faint" data-testid="play-status">
         Статус: {room.status}
       </p>
 
       {!room.hostConnected && room.status !== "FINISHED" ? (
         <div
-          className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-center text-sm text-amber-800"
+          className="rounded-[12px] border border-pale-yellow-ink/25 bg-pale-yellow p-4 text-center text-sm text-pale-yellow-ink"
           data-testid="host-disconnected-banner"
         >
           Ведущий временно отключился. Игра на паузе, подождите переподключения...
@@ -164,21 +164,26 @@ export function PlayGameClient({ code, nickname }: PlayGameClientProps) {
       ) : null}
 
       {room.status === "LOBBY" ? (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 text-center shadow-sm">
-          <p className="text-lg font-semibold text-zinc-950">Ожидание начала игры...</p>
-          <p className="mt-2 text-sm text-zinc-600">Участников в комнате: {room.participants.length}</p>
+        <div className="rounded-[12px] border border-line bg-surface p-8 text-center shadow-soft">
+          <p className="font-display text-2xl text-ink">Ожидание начала игры…</p>
+          <p className="mt-3 text-sm text-muted">Участников в комнате: {room.participants.length}</p>
         </div>
       ) : null}
 
       {room.status === "QUESTION" && room.currentQuestion ? (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-zinc-600">
-            Вопрос {room.currentQuestionIndex + 1} из {room.totalQuestions}
-          </p>
-          <h2 className="mt-2 text-xl font-semibold text-zinc-950">{room.currentQuestion.text}</h2>
-          <p className="mt-2 text-2xl font-bold text-emerald-800" data-testid="play-timer">
-            {remainingSec}s
-          </p>
+        <div className="rounded-[12px] border border-line bg-surface p-6 shadow-soft">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted">
+              Вопрос {room.currentQuestionIndex + 1} из {room.totalQuestions}
+            </p>
+            <span
+              className="font-mono text-3xl font-semibold tabular-nums text-ink"
+              data-testid="play-timer"
+            >
+              {remainingSec}s
+            </span>
+          </div>
+          <h2 className="mt-3 text-xl font-semibold tracking-tight text-ink">{room.currentQuestion.text}</h2>
 
           <div className="mt-6 grid gap-3">
             {room.currentQuestion.options.map((option) => {
@@ -191,8 +196,10 @@ export function PlayGameClient({ code, nickname }: PlayGameClientProps) {
                   data-option-id={option.id}
                   disabled={locked}
                   onClick={() => handleOptionClick(option.id)}
-                  className={`h-14 rounded-md border px-4 text-left text-lg transition disabled:cursor-not-allowed ${
-                    isSelected ? "border-emerald-600 bg-emerald-50" : "border-zinc-300 bg-white hover:bg-zinc-50"
+                  className={`flex min-h-[64px] items-center rounded-[10px] border px-5 text-left text-lg font-medium transition-[transform,background-color,border-color] duration-100 active:scale-[0.99] disabled:cursor-not-allowed ${
+                    isSelected
+                      ? "border-ink bg-ink/[0.04] text-ink"
+                      : "border-line bg-surface text-ink-soft hover:border-line-strong"
                   }`}
                 >
                   {option.text}
@@ -207,20 +214,20 @@ export function PlayGameClient({ code, nickname }: PlayGameClientProps) {
               data-testid="submit-answer-button"
               disabled={locked || selected.length === 0}
               onClick={() => submitAnswer(selected)}
-              className="mt-4 h-11 w-full rounded-md bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-zinc-300"
+              className="mt-4 h-12 w-full rounded-[6px] bg-ink px-5 text-sm font-medium text-white transition active:scale-[0.99] hover:bg-ink-soft disabled:pointer-events-none disabled:opacity-45"
             >
               Ответить
             </button>
           ) : null}
 
           {locked ? (
-            <p className="mt-4 text-center text-sm font-medium text-emerald-700" data-testid="answer-locked">
+            <p className="mt-4 text-center text-sm font-medium text-pale-green-ink" data-testid="answer-locked">
               Ответ принят
             </p>
           ) : null}
 
           {answerFeedback && !answerFeedback.accepted ? (
-            <p className="mt-4 text-center text-sm font-medium text-red-700" data-testid="answer-rejected">
+            <p className="mt-4 text-center text-sm font-medium text-pale-red-ink" data-testid="answer-rejected">
               Ответ не принят: {answerFeedback.reason}
             </p>
           ) : null}
@@ -228,7 +235,7 @@ export function PlayGameClient({ code, nickname }: PlayGameClientProps) {
       ) : null}
 
       {room.status === "REVEAL" && room.currentQuestion ? (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="rounded-[12px] border border-line bg-surface p-6 shadow-soft">
           <div className="grid gap-3">
             {room.currentQuestion.options.map((option) => {
               const isCorrect = questionEnd?.correctOptionIds.includes(option.id) ?? false;
@@ -236,8 +243,10 @@ export function PlayGameClient({ code, nickname }: PlayGameClientProps) {
                 <div
                   key={option.id}
                   data-testid={isCorrect ? "correct-option" : "incorrect-option"}
-                  className={`rounded-md border p-4 text-lg ${
-                    isCorrect ? "border-emerald-600 bg-emerald-50" : "border-zinc-200 bg-zinc-50"
+                  className={`rounded-[10px] border p-4 text-lg ${
+                    isCorrect
+                      ? "border-pale-green-ink/30 bg-pale-green text-pale-green-ink"
+                      : "border-line bg-surface-muted text-muted"
                   }`}
                 >
                   {option.text}
@@ -248,8 +257,8 @@ export function PlayGameClient({ code, nickname }: PlayGameClientProps) {
 
           {scoreUpdate ? (
             <p
-              className={`mt-4 text-center text-lg font-semibold ${
-                scoreUpdate.wasCorrect ? "text-emerald-700" : "text-red-700"
+              className={`mt-5 text-center text-xl font-semibold ${
+                scoreUpdate.wasCorrect ? "text-pale-green-ink" : "text-pale-red-ink"
               }`}
               data-testid="own-result"
             >
@@ -263,12 +272,12 @@ export function PlayGameClient({ code, nickname }: PlayGameClientProps) {
                 <li
                   key={entry.userId}
                   data-testid="leaderboard-entry"
-                  className="flex items-center justify-between rounded-md bg-zinc-50 px-4 py-2 text-sm"
+                  className="flex items-center justify-between rounded-[8px] bg-surface-muted px-4 py-2.5 text-sm"
                 >
-                  <span>
-                    #{entry.rank} {entry.nickname}
+                  <span className="text-ink">
+                    <span className="font-mono text-faint">#{entry.rank}</span> {entry.nickname}
                   </span>
-                  <span className="font-semibold">{entry.score}</span>
+                  <span className="font-semibold tabular-nums text-ink">{entry.score}</span>
                 </li>
               ))}
             </ol>
@@ -277,21 +286,22 @@ export function PlayGameClient({ code, nickname }: PlayGameClientProps) {
       ) : null}
 
       {room.status === "FINISHED" ? (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm" data-testid="final-screen">
-          <h2 className="text-xl font-semibold text-zinc-950">Игра завершена</h2>
+        <div className="rounded-[12px] border border-line bg-surface p-6 text-center shadow-soft" data-testid="final-screen">
+          <h2 className="font-display text-2xl text-ink">Игра завершена</h2>
           {finalLeaderboard ? (
-            <ol className="mt-4 space-y-2" data-testid="final-leaderboard">
+            <ol className="mt-5 space-y-2 text-left" data-testid="final-leaderboard">
               {finalLeaderboard.entries.map((entry) => (
                 <li
                   key={entry.userId}
                   data-testid="final-leaderboard-entry"
-                  className="flex items-center justify-between rounded-md bg-zinc-50 px-4 py-2 text-sm"
+                  className={`flex items-center justify-between rounded-[8px] px-4 py-2.5 text-sm ${
+                    entry.rank === 1 ? "bg-pale-yellow text-pale-yellow-ink" : "bg-surface-muted text-ink"
+                  }`}
                 >
                   <span>
-                    #{entry.rank} {entry.nickname}
-                    {entry.rank === 1 ? " 🏆" : ""}
+                    <span className="font-mono">#{entry.rank}</span> {entry.nickname}
                   </span>
-                  <span className="font-semibold">{entry.score}</span>
+                  <span className="font-semibold tabular-nums">{entry.score}</span>
                 </li>
               ))}
             </ol>

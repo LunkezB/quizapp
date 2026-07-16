@@ -31,7 +31,7 @@ export function StartSessionButton({ quizId, disabled, className }: StartSession
       <button type="button" onClick={handleClick} disabled={disabled || isPending} className={className}>
         {isPending ? "Запуск..." : "Запустить"}
       </button>
-      {error ? <p className="mt-2 text-sm text-red-700">{error}</p> : null}
+      {error ? <p className="mt-2 text-sm text-pale-red-ink">{error}</p> : null}
     </div>
   );
 }

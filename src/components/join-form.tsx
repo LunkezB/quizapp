@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { Button } from "@/components/ui/button";
+import { controlClassName, Input, Label } from "@/components/ui/field";
 
 type JoinFormProps = {
   defaultNickname: string;
@@ -34,9 +36,7 @@ export function JoinForm({ defaultNickname }: JoinFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label htmlFor="code" className="block text-sm font-medium text-zinc-800">
-          Код комнаты
-        </label>
+        <Label htmlFor="code">Код комнаты</Label>
         <input
           id="code"
           name="code"
@@ -46,35 +46,29 @@ export function JoinForm({ defaultNickname }: JoinFormProps) {
           maxLength={6}
           placeholder="ABC123"
           autoComplete="off"
-          className="mt-2 h-12 w-full rounded-md border border-zinc-300 bg-white px-3 text-center text-2xl font-mono uppercase tracking-[0.3em] text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+          className={`mt-2 h-14 text-center font-mono text-2xl uppercase tracking-[0.3em] ${controlClassName}`}
           required
         />
       </div>
 
       <div>
-        <label htmlFor="nickname" className="block text-sm font-medium text-zinc-800">
-          Никнейм
-        </label>
-        <input
+        <Label htmlFor="nickname">Никнейм</Label>
+        <Input
           id="nickname"
           name="nickname"
           type="text"
           value={nickname}
           onChange={(event) => setNickname(event.target.value)}
           maxLength={40}
-          className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
           required
         />
       </div>
 
-      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {error ? <p className="text-sm text-pale-red-ink">{error}</p> : null}
 
-      <button
-        type="submit"
-        className="h-11 w-full rounded-md bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800"
-      >
+      <Button type="submit" size="lg" className="w-full">
         Войти в комнату
-      </button>
+      </Button>
     </form>
   );
 }

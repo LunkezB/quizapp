@@ -30,15 +30,15 @@ export default async function NewQuestionPage({ params }: NewQuestionPageProps) 
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-canvas">
       <AppHeader user={user} />
-      <div className="mx-auto w-full max-w-4xl px-6 py-8">
-        <Link href={`/quiz/${quiz.id}/edit`} className="text-sm font-medium text-emerald-800">
+      <div className="mx-auto w-full max-w-4xl px-6 py-12">
+        <Link href={`/quiz/${quiz.id}/edit`} className="text-sm font-medium text-muted transition-colors hover:text-ink">
           ← Назад к квизу
         </Link>
-        <div className="mt-3 rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-          <h1 className="text-2xl font-semibold text-zinc-950">Новый вопрос</h1>
-          <p className="mt-1 text-sm text-zinc-600">{quiz.title}</p>
+        <div className="fade-up mt-4 rounded-[12px] border border-line bg-surface p-6 shadow-soft sm:p-8">
+          <h1 className="font-display text-2xl text-ink sm:text-3xl">Новый вопрос</h1>
+          <p className="mt-1 text-sm text-muted">{quiz.title}</p>
           <div className="mt-6">
             <QuestionForm quizId={quiz.id} />
           </div>

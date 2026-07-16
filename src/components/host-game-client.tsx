@@ -95,29 +95,29 @@ export function HostGameClient({ code, quizTitle }: HostGameClientProps) {
 
   if (error) {
     return (
-      <div className="mx-auto max-w-md rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-        <p className="text-red-800">{error}</p>
+      <div className="mx-auto mt-10 max-w-md rounded-[12px] border border-pale-red-ink/20 bg-pale-red p-6 text-center">
+        <p className="text-pale-red-ink">{error}</p>
       </div>
     );
   }
 
   if (!room) {
-    return <div className="mx-auto max-w-md p-6 text-center text-zinc-600">Подключение...</div>;
+    return <div className="mx-auto mt-10 max-w-md p-6 text-center text-muted">Подключение...</div>;
   }
 
   const remainingSec = room.deadline ? Math.max(0, Math.ceil((room.deadline - now) / 1000)) : 0;
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-6 px-6 py-8">
-      <div className="flex flex-col items-center gap-2 rounded-lg border border-zinc-200 bg-white p-6 text-center shadow-sm">
-        <p className="text-sm font-medium text-zinc-600">{quizTitle}</p>
-        <p className="text-sm text-zinc-500" data-testid="host-status">
+    <div className="fade-up mx-auto w-full max-w-5xl space-y-6 px-6 py-10">
+      <div className="flex flex-col items-center gap-2 rounded-[12px] border border-line bg-surface p-8 text-center shadow-soft">
+        <p className="text-sm font-medium text-muted">{quizTitle}</p>
+        <p className="text-xs uppercase tracking-[0.08em] text-faint" data-testid="host-status">
           Статус: {room.status}
         </p>
         {room.status === "LOBBY" ? (
           <>
-            <p className="text-sm text-zinc-600">Код комнаты</p>
-            <p className="font-mono text-6xl font-bold tracking-[0.3em] text-emerald-800" data-testid="room-code">
+            <p className="mt-4 text-xs uppercase tracking-[0.14em] text-muted">Код комнаты</p>
+            <p className="font-mono text-7xl font-bold tracking-[0.2em] text-ink sm:text-8xl" data-testid="room-code">
               {room.code}
             </p>
           </>
@@ -125,19 +125,17 @@ export function HostGameClient({ code, quizTitle }: HostGameClientProps) {
       </div>
 
       {room.status === "LOBBY" ? (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-zinc-950">
-            Участники ({room.participants.length})
-          </h2>
-          <ul className="mt-4 space-y-2" data-testid="participant-list">
+        <div className="rounded-[12px] border border-line bg-surface p-8 shadow-soft">
+          <h2 className="text-lg font-semibold tracking-tight text-ink">Участники ({room.participants.length})</h2>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2" data-testid="participant-list">
             {room.participants.map((participant) => (
               <li
                 key={participant.userId}
                 data-testid="participant-item"
-                className="flex items-center justify-between rounded-md bg-zinc-50 px-4 py-2 text-sm"
+                className="flex items-center justify-between rounded-[8px] bg-surface-muted px-4 py-3 text-base"
               >
-                <span>{participant.nickname}</span>
-                <span className={participant.connected ? "text-emerald-700" : "text-zinc-400"}>
+                <span className="font-medium text-ink">{participant.nickname}</span>
+                <span className={participant.connected ? "text-sm text-pale-green-ink" : "text-sm text-faint"}>
                   {participant.connected ? "в сети" : "офлайн"}
                 </span>
               </li>
@@ -148,7 +146,7 @@ export function HostGameClient({ code, quizTitle }: HostGameClientProps) {
             onClick={handleStart}
             disabled={room.participants.length === 0}
             data-testid="start-game-button"
-            className="mt-6 h-11 w-full rounded-md bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-600"
+            className="mt-8 h-12 w-full rounded-[6px] bg-ink px-5 text-base font-medium text-white transition active:scale-[0.99] hover:bg-ink-soft disabled:pointer-events-none disabled:opacity-45"
           >
             Start
           </button>
@@ -156,29 +154,39 @@ export function HostGameClient({ code, quizTitle }: HostGameClientProps) {
       ) : null}
 
       {room.status === "QUESTION" && room.currentQuestion ? (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-zinc-600">
-            Вопрос {room.currentQuestionIndex + 1} из {room.totalQuestions}
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold text-zinc-950">{room.currentQuestion.text}</h2>
-          <p className="mt-4 text-4xl font-bold text-emerald-800" data-testid="host-timer">
-            {remainingSec}s
-          </p>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-[12px] border border-line bg-surface p-8 shadow-soft">
+          <div className="flex items-start justify-between gap-6">
+            <p className="text-sm text-muted">
+              Вопрос {room.currentQuestionIndex + 1} из {room.totalQuestions}
+            </p>
+            <span
+              className="font-mono text-6xl font-bold leading-none tabular-nums text-ink"
+              data-testid="host-timer"
+            >
+              {remainingSec}s
+            </span>
+          </div>
+          <h2 className="mt-4 font-display text-3xl text-ink sm:text-4xl">{room.currentQuestion.text}</h2>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
             {room.currentQuestion.options.map((option) => (
-              <div key={option.id} className="rounded-md border border-zinc-200 bg-zinc-50 p-4 text-lg">
+              <div
+                key={option.id}
+                className="rounded-[10px] border border-line bg-surface-muted p-5 text-xl text-ink-soft"
+              >
                 {option.text}
               </div>
             ))}
           </div>
-          <p className="mt-6 text-sm text-zinc-600" data-testid="answered-count">
-            Ответили: {answerCount?.answeredCount ?? 0} из {answerCount?.totalParticipants ?? 0}
+          <p className="mt-8 text-lg text-muted" data-testid="answered-count">
+            Ответили:{" "}
+            <span className="font-semibold tabular-nums text-ink">{answerCount?.answeredCount ?? 0}</span> из{" "}
+            {answerCount?.totalParticipants ?? 0}
           </p>
           <button
             type="button"
             onClick={handleNext}
             data-testid="next-question-button"
-            className="mt-4 h-11 rounded-md border border-zinc-300 px-5 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+            className="mt-4 h-11 rounded-[6px] border border-line bg-surface px-5 text-sm font-medium text-ink-soft transition hover:bg-surface-muted active:scale-[0.98]"
           >
             Далее
           </button>
@@ -186,12 +194,12 @@ export function HostGameClient({ code, quizTitle }: HostGameClientProps) {
       ) : null}
 
       {room.status === "REVEAL" && room.currentQuestion ? (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-          <p className="text-sm text-zinc-600">
+        <div className="rounded-[12px] border border-line bg-surface p-8 shadow-soft">
+          <p className="text-sm text-muted">
             Вопрос {room.currentQuestionIndex + 1} из {room.totalQuestions} — результат
           </p>
-          <h2 className="mt-2 text-2xl font-semibold text-zinc-950">{room.currentQuestion.text}</h2>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2" data-testid="reveal-options">
+          <h2 className="mt-2 font-display text-3xl text-ink sm:text-4xl">{room.currentQuestion.text}</h2>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2" data-testid="reveal-options">
             {room.currentQuestion.options.map((option) => {
               const isCorrect = questionEnd?.correctOptionIds.includes(option.id) ?? false;
               const count = questionEnd?.breakdown[option.id] ?? 0;
@@ -199,30 +207,33 @@ export function HostGameClient({ code, quizTitle }: HostGameClientProps) {
                 <div
                   key={option.id}
                   data-testid={isCorrect ? "correct-option" : "incorrect-option"}
-                  className={`rounded-md border p-4 text-lg ${
-                    isCorrect ? "border-emerald-600 bg-emerald-50" : "border-zinc-200 bg-zinc-50"
+                  className={`flex items-center justify-between rounded-[10px] border p-5 text-xl ${
+                    isCorrect
+                      ? "border-pale-green-ink/30 bg-pale-green text-pale-green-ink"
+                      : "border-line bg-surface-muted text-muted"
                   }`}
                 >
-                  {option.text} <span className="text-sm text-zinc-500">({count})</span>
+                  <span>{option.text}</span>
+                  <span className="font-mono text-base tabular-nums">{count}</span>
                 </div>
               );
             })}
           </div>
 
           {leaderboard ? (
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold text-zinc-950">Лидерборд</h3>
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold tracking-tight text-ink">Лидерборд</h3>
               <ol className="mt-3 space-y-2" data-testid="leaderboard">
                 {leaderboard.entries.map((entry) => (
                   <li
                     key={entry.userId}
                     data-testid="leaderboard-entry"
-                    className="flex items-center justify-between rounded-md bg-zinc-50 px-4 py-2 text-sm"
+                    className="flex items-center justify-between rounded-[8px] bg-surface-muted px-4 py-2.5 text-base"
                   >
-                    <span>
-                      #{entry.rank} {entry.nickname}
+                    <span className="text-ink">
+                      <span className="font-mono text-faint">#{entry.rank}</span> {entry.nickname}
                     </span>
-                    <span className="font-semibold">{entry.score}</span>
+                    <span className="font-semibold tabular-nums text-ink">{entry.score}</span>
                   </li>
                 ))}
               </ol>
@@ -233,7 +244,7 @@ export function HostGameClient({ code, quizTitle }: HostGameClientProps) {
             type="button"
             onClick={handleNext}
             data-testid="next-question-button"
-            className="mt-6 h-11 rounded-md bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800"
+            className="mt-8 h-11 rounded-[6px] bg-ink px-5 text-sm font-medium text-white transition hover:bg-ink-soft active:scale-[0.98]"
           >
             {room.currentQuestionIndex + 1 < room.totalQuestions ? "Следующий вопрос" : "Завершить игру"}
           </button>
@@ -241,21 +252,22 @@ export function HostGameClient({ code, quizTitle }: HostGameClientProps) {
       ) : null}
 
       {room.status === "FINISHED" ? (
-        <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm" data-testid="final-screen">
-          <h2 className="text-2xl font-semibold text-zinc-950">Игра завершена</h2>
+        <div className="rounded-[12px] border border-line bg-surface p-8 text-center shadow-soft" data-testid="final-screen">
+          <h2 className="font-display text-4xl text-ink">Игра завершена</h2>
           {finalLeaderboard ? (
-            <ol className="mt-4 space-y-2" data-testid="final-leaderboard">
+            <ol className="mx-auto mt-6 max-w-xl space-y-2 text-left" data-testid="final-leaderboard">
               {finalLeaderboard.entries.map((entry) => (
                 <li
                   key={entry.userId}
                   data-testid="final-leaderboard-entry"
-                  className="flex items-center justify-between rounded-md bg-zinc-50 px-4 py-2 text-sm"
+                  className={`flex items-center justify-between rounded-[8px] px-5 py-3 text-lg ${
+                    entry.rank === 1 ? "bg-pale-yellow text-pale-yellow-ink" : "bg-surface-muted text-ink"
+                  }`}
                 >
                   <span>
-                    #{entry.rank} {entry.nickname}
-                    {entry.rank === 1 ? " 🏆" : ""}
+                    <span className="font-mono">#{entry.rank}</span> {entry.nickname}
                   </span>
-                  <span className="font-semibold">{entry.score}</span>
+                  <span className="font-semibold tabular-nums">{entry.score}</span>
                 </li>
               ))}
             </ol>

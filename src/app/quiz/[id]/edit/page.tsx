@@ -5,6 +5,9 @@ import { AppHeader } from "@/components/app-header";
 import { DeleteQuizButton } from "@/components/delete-quiz-button";
 import { QuizForm } from "@/components/quiz-form";
 import { StartSessionButton } from "@/components/start-session-button";
+import { badgeClassName } from "@/components/ui/badge";
+import { buttonClassName } from "@/components/ui/button";
+import { cardClassName } from "@/components/ui/card";
 import { requireCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
@@ -63,70 +66,64 @@ export default async function EditQuizPage({ params }: EditQuizPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-canvas">
       <AppHeader user={user} />
 
-      <div className="mx-auto w-full max-w-6xl space-y-8 px-6 py-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mx-auto w-full max-w-6xl space-y-10 px-6 py-12">
+        <div className="fade-up flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <Link href="/dashboard" prefetch={false} className="text-sm font-medium text-emerald-800">
+            <Link href="/dashboard" prefetch={false} className="text-sm font-medium text-muted transition-colors hover:text-ink">
               ← Назад в кабинет
             </Link>
-            <h1 className="mt-3 text-3xl font-semibold text-zinc-950">{quiz.title}</h1>
-            <p className="mt-1 text-sm text-zinc-600">Редактор метаданных и вопросов.</p>
+            <h1 className="mt-3 font-display text-3xl text-ink sm:text-4xl">{quiz.title}</h1>
+            <p className="mt-2 text-sm text-muted">Редактор метаданных и вопросов.</p>
           </div>
 
           <div className="flex shrink-0 items-start gap-2">
-            <StartSessionButton
-              quizId={quiz.id}
-              disabled={quiz.questions.length === 0}
-              className="h-10 rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-600"
-            />
-            <DeleteQuizButton
-              quizId={quiz.id}
-              className="h-10 rounded-md border border-red-200 px-4 text-sm font-medium text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:text-red-300"
-            >
+            <StartSessionButton quizId={quiz.id} disabled={quiz.questions.length === 0} className={buttonClassName("primary", "md")} />
+            <DeleteQuizButton quizId={quiz.id} className={buttonClassName("danger", "md")}>
               Удалить квиз
             </DeleteQuizButton>
           </div>
         </div>
 
-        <section className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-5 text-xl font-semibold text-zinc-950">Метаданные</h2>
+        <section className={`${cardClassName} p-6 sm:p-8`}>
+          <h2 className="mb-6 text-xl font-semibold tracking-tight text-ink">Метаданные</h2>
           <QuizForm categories={categories} quiz={quiz} />
         </section>
 
-        <section className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <section className={`${cardClassName} p-6 sm:p-8`}>
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-zinc-950">Вопросы</h2>
-              <p className="mt-1 text-sm text-zinc-600">Порядок задается кнопками вверх/вниз.</p>
+              <h2 className="text-xl font-semibold tracking-tight text-ink">Вопросы</h2>
+              <p className="mt-1 text-sm text-muted">Порядок задается кнопками вверх/вниз.</p>
             </div>
-            <Link
-              href={`/quiz/${quiz.id}/questions/new`}
-              className="inline-flex h-10 items-center justify-center rounded-md bg-emerald-700 px-4 text-sm font-semibold text-white transition hover:bg-emerald-800"
-            >
+            <Link href={`/quiz/${quiz.id}/questions/new`} className={buttonClassName("primary", "md")}>
               Добавить вопрос
             </Link>
           </div>
 
           {quiz.questions.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50 p-6">
-              <h3 className="font-semibold text-zinc-950">Вопросов пока нет</h3>
-              <p className="mt-1 text-sm text-zinc-600">Добавьте SINGLE или MULTIPLE вопрос с вариантами ответа.</p>
+            <div className="rounded-[12px] border border-dashed border-line-strong bg-surface-muted p-8 text-center">
+              <h3 className="font-semibold text-ink">Вопросов пока нет</h3>
+              <p className="mt-1 text-sm text-muted">Добавьте SINGLE или MULTIPLE вопрос с вариантами ответа.</p>
             </div>
           ) : (
             <div className="space-y-3">
               {quiz.questions.map((question, index) => (
-                <article key={question.id} className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+                <article key={question.id} className="rounded-[12px] border border-line bg-surface-muted p-5">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                      <p className="text-sm font-medium text-zinc-600">
-                        #{index + 1} · {question.type} · {question.points} очков ·{" "}
-                        {question.timeLimitSec ? `${question.timeLimitSec} сек.` : "дефолтное время"}
+                      <p className="flex flex-wrap items-center gap-2 text-sm text-muted">
+                        <span className="font-mono text-faint">#{index + 1}</span>
+                        <span className={badgeClassName(question.type === "SINGLE" ? "blue" : "green")}>{question.type}</span>
+                        <span>
+                          {question.points} очков ·{" "}
+                          {question.timeLimitSec ? `${question.timeLimitSec} сек.` : "дефолтное время"}
+                        </span>
                       </p>
-                      <h3 className="mt-1 text-lg font-semibold text-zinc-950">{question.text}</h3>
-                      <p className="mt-2 text-sm text-zinc-600">
+                      <h3 className="mt-2 text-lg font-semibold tracking-tight text-ink">{question.text}</h3>
+                      <p className="mt-2 text-sm text-muted">
                         Верных вариантов: {question.answerOptions.filter((option) => option.isCorrect).length} из{" "}
                         {question.answerOptions.length}
                       </p>
@@ -134,11 +131,7 @@ export default async function EditQuizPage({ params }: EditQuizPageProps) {
 
                     <div className="flex flex-wrap gap-2">
                       <form action={moveQuestionAction.bind(null, quiz.id, question.id, "up")}>
-                        <button
-                          type="submit"
-                          disabled={index === 0}
-                          className="h-9 rounded-md border border-zinc-300 px-3 text-sm text-zinc-800 transition hover:bg-white disabled:cursor-not-allowed disabled:text-zinc-400"
-                        >
+                        <button type="submit" disabled={index === 0} className={buttonClassName("secondary", "sm", "px-3")}>
                           ↑
                         </button>
                       </form>
@@ -146,22 +139,16 @@ export default async function EditQuizPage({ params }: EditQuizPageProps) {
                         <button
                           type="submit"
                           disabled={index === quiz.questions.length - 1}
-                          className="h-9 rounded-md border border-zinc-300 px-3 text-sm text-zinc-800 transition hover:bg-white disabled:cursor-not-allowed disabled:text-zinc-400"
+                          className={buttonClassName("secondary", "sm", "px-3")}
                         >
                           ↓
                         </button>
                       </form>
-                      <Link
-                        href={`/quiz/${quiz.id}/questions/${question.id}/edit`}
-                        className="inline-flex h-9 items-center rounded-md border border-zinc-300 px-3 text-sm font-medium text-zinc-800 transition hover:bg-white"
-                      >
+                      <Link href={`/quiz/${quiz.id}/questions/${question.id}/edit`} className={buttonClassName("secondary", "sm")}>
                         Редактировать
                       </Link>
                       <form action={deleteQuestionAction.bind(null, quiz.id, question.id)}>
-                        <button
-                          type="submit"
-                          className="h-9 rounded-md border border-zinc-300 px-3 text-sm font-medium text-zinc-800 transition hover:bg-white"
-                        >
+                        <button type="submit" className={buttonClassName("secondary", "sm")}>
                           Удалить
                         </button>
                       </form>

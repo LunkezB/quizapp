@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useActionState, useMemo, useState, type FormEvent } from "react";
 import { createQuestionAction, updateQuestionAction } from "@/actions/questions";
 import { FieldError } from "@/components/field-error";
+import { Button, buttonClassName } from "@/components/ui/button";
+import { controlClassName, Input, Label, Select, Textarea } from "@/components/ui/field";
 import { initialActionState, type ActionState, type FieldErrors } from "@/lib/action-state";
 import { questionFormSchema } from "@/lib/validation";
 
@@ -151,10 +153,8 @@ export function QuestionForm({ quizId, question }: QuestionFormProps) {
 
       <div className="grid gap-5 sm:grid-cols-3">
         <div>
-          <label htmlFor="type" className="block text-sm font-medium text-zinc-800">
-            Тип
-          </label>
-          <select
+          <Label htmlFor="type">Тип</Label>
+          <Select
             id="type"
             name="type"
             value={type}
@@ -165,19 +165,16 @@ export function QuestionForm({ quizId, question }: QuestionFormProps) {
                 setSingleCorrect(options.find((option) => option.isCorrect)?.clientId ?? options[0]?.clientId ?? "");
               }
             }}
-            className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
           >
             <option value="SINGLE">SINGLE</option>
             <option value="MULTIPLE">MULTIPLE</option>
-          </select>
+          </Select>
           <FieldError fieldErrors={state.fieldErrors} name="type" />
         </div>
 
         <div>
-          <label htmlFor="timeLimitSec" className="block text-sm font-medium text-zinc-800">
-            Лимит, сек.
-          </label>
-          <input
+          <Label htmlFor="timeLimitSec">Лимит, сек.</Label>
+          <Input
             id="timeLimitSec"
             name="timeLimitSec"
             type="number"
@@ -185,69 +182,36 @@ export function QuestionForm({ quizId, question }: QuestionFormProps) {
             max={300}
             defaultValue={question?.timeLimitSec ?? ""}
             placeholder="Дефолт квиза"
-            className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
           />
           <FieldError fieldErrors={state.fieldErrors} name="timeLimitSec" />
         </div>
 
         <div>
-          <label htmlFor="points" className="block text-sm font-medium text-zinc-800">
-            Очки
-          </label>
-          <input
-            id="points"
-            name="points"
-            type="number"
-            min={0}
-            max={100000}
-            defaultValue={question?.points ?? 1000}
-            className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
-          />
+          <Label htmlFor="points">Очки</Label>
+          <Input id="points" name="points" type="number" min={0} max={100000} defaultValue={question?.points ?? 1000} />
           <FieldError fieldErrors={state.fieldErrors} name="points" />
         </div>
       </div>
 
       <div>
-        <label htmlFor="text" className="block text-sm font-medium text-zinc-800">
-          Текст вопроса
-        </label>
-        <textarea
-          id="text"
-          name="text"
-          rows={4}
-          defaultValue={question?.text ?? ""}
-          className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
-          required
-        />
+        <Label htmlFor="text">Текст вопроса</Label>
+        <Textarea id="text" name="text" rows={4} defaultValue={question?.text ?? ""} required />
         <FieldError fieldErrors={state.fieldErrors} name="text" />
       </div>
 
       <div>
-        <label htmlFor="imageUrl" className="block text-sm font-medium text-zinc-800">
-          Image URL
-        </label>
-        <input
-          id="imageUrl"
-          name="imageUrl"
-          type="url"
-          defaultValue={question?.imageUrl ?? ""}
-          className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
-        />
+        <Label htmlFor="imageUrl">Image URL</Label>
+        <Input id="imageUrl" name="imageUrl" type="url" defaultValue={question?.imageUrl ?? ""} />
         <FieldError fieldErrors={state.fieldErrors} name="imageUrl" />
       </div>
 
       <section className="space-y-3">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-zinc-950">Варианты ответа</h2>
-            <p className="mt-1 text-sm text-zinc-600">От 2 до 6 вариантов, текст или изображение обязательны.</p>
+            <h2 className="text-lg font-semibold tracking-tight text-ink">Варианты ответа</h2>
+            <p className="mt-1 text-sm text-muted">От 2 до 6 вариантов, текст или изображение обязательны.</p>
           </div>
-          <button
-            type="button"
-            onClick={addOption}
-            disabled={options.length >= 6}
-            className="h-10 rounded-md border border-zinc-300 px-4 text-sm font-medium text-zinc-800 transition hover:bg-zinc-50 disabled:cursor-not-allowed disabled:text-zinc-400"
-          >
+          <button type="button" onClick={addOption} disabled={options.length >= 6} className={buttonClassName("secondary", "md")}>
             Добавить
           </button>
         </div>
@@ -255,19 +219,17 @@ export function QuestionForm({ quizId, question }: QuestionFormProps) {
 
         <div className="space-y-3">
           {options.map((option, index) => (
-            <div key={option.clientId} className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+            <div key={option.clientId} className="rounded-[12px] border border-line bg-surface-muted p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-                <label className="flex h-10 items-center gap-2 text-sm font-medium text-zinc-800">
+                <label className="flex h-11 items-center gap-2 text-sm font-medium text-ink-soft">
                   <input
                     type={type === "SINGLE" ? "radio" : "checkbox"}
                     name="correctOption"
                     checked={option.isCorrect}
                     onChange={() =>
-                      type === "SINGLE"
-                        ? setSingleCorrect(option.clientId)
-                        : toggleMultipleCorrect(option.clientId)
+                      type === "SINGLE" ? setSingleCorrect(option.clientId) : toggleMultipleCorrect(option.clientId)
                     }
-                    className="h-4 w-4 accent-emerald-700"
+                    className="h-4 w-4 accent-ink"
                   />
                   Верный
                 </label>
@@ -278,14 +240,14 @@ export function QuestionForm({ quizId, question }: QuestionFormProps) {
                     value={option.text}
                     onChange={(event) => updateOption(option.clientId, "text", event.target.value)}
                     placeholder={`Вариант ${index + 1}`}
-                    className="h-10 rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+                    className={`h-11 ${controlClassName}`}
                   />
                   <input
                     type="url"
                     value={option.imageUrl}
                     onChange={(event) => updateOption(option.clientId, "imageUrl", event.target.value)}
                     placeholder="Image URL"
-                    className="h-10 rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+                    className={`h-11 ${controlClassName}`}
                   />
                 </div>
 
@@ -293,7 +255,7 @@ export function QuestionForm({ quizId, question }: QuestionFormProps) {
                   type="button"
                   onClick={() => removeOption(option.clientId)}
                   disabled={options.length <= 2}
-                  className="h-10 rounded-md border border-zinc-300 px-3 text-sm font-medium text-zinc-700 transition hover:bg-white disabled:cursor-not-allowed disabled:text-zinc-400"
+                  className={buttonClassName("ghost", "md")}
                 >
                   Удалить
                 </button>
@@ -304,21 +266,14 @@ export function QuestionForm({ quizId, question }: QuestionFormProps) {
       </section>
 
       {state.message ? (
-        <p className={state.ok ? "text-sm text-emerald-700" : "text-sm text-red-700"}>{state.message}</p>
+        <p className={state.ok ? "text-sm text-pale-green-ink" : "text-sm text-pale-red-ink"}>{state.message}</p>
       ) : null}
 
       <div className="flex flex-col gap-3 sm:flex-row">
-        <button
-          type="submit"
-          disabled={isPending}
-          className="h-11 rounded-md bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-600"
-        >
+        <Button type="submit" size="lg" disabled={isPending}>
           {isPending ? "Сохранение..." : question ? "Сохранить вопрос" : "Добавить вопрос"}
-        </button>
-        <Link
-          href={`/quiz/${quizId}/edit`}
-          className="inline-flex h-11 items-center justify-center rounded-md border border-zinc-300 px-5 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
-        >
+        </Button>
+        <Link href={`/quiz/${quizId}/edit`} className={buttonClassName("secondary", "lg")}>
           Отмена
         </Link>
       </div>

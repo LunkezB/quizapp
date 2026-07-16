@@ -12,5 +12,5 @@ export function FieldError({ fieldErrors, name }: FieldErrorProps) {
     return null;
   }
 
-  return <p className="mt-1 text-sm text-red-700">{errors[0]}</p>;
+  return <p className="mt-1.5 text-sm text-pale-red-ink">{errors[0]}</p>;
 }

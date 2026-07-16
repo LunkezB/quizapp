@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useActionState, useState, type FormEvent } from "react";
 import { loginAction, registerAction } from "@/actions/auth";
 import { FieldError } from "@/components/field-error";
+import { Button } from "@/components/ui/button";
+import { Input, Label, Select } from "@/components/ui/field";
 import { initialActionState, type ActionState, type FieldErrors } from "@/lib/action-state";
 import { loginSchema, registerSchema } from "@/lib/validation";
 
@@ -45,47 +47,26 @@ export function AuthForm(props: AuthFormProps) {
       {isLogin ? <input type="hidden" name="next" value={props.nextPath} /> : null}
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-zinc-800">
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
-          required
-        />
+        <Label htmlFor="email">Email</Label>
+        <Input id="email" name="email" type="email" autoComplete="email" required />
         <FieldError fieldErrors={state.fieldErrors} name="email" />
       </div>
 
       {!isLogin ? (
         <div>
-          <label htmlFor="displayName" className="block text-sm font-medium text-zinc-800">
-            Имя
-          </label>
-          <input
-            id="displayName"
-            name="displayName"
-            type="text"
-            autoComplete="name"
-            className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
-            required
-          />
+          <Label htmlFor="displayName">Имя</Label>
+          <Input id="displayName" name="displayName" type="text" autoComplete="name" required />
           <FieldError fieldErrors={state.fieldErrors} name="displayName" />
         </div>
       ) : null}
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-zinc-800">
-          Пароль
-        </label>
-        <input
+        <Label htmlFor="password">Пароль</Label>
+        <Input
           id="password"
           name="password"
           type="password"
           autoComplete={isLogin ? "current-password" : "new-password"}
-          className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
           required
         />
         <FieldError fieldErrors={state.fieldErrors} name="password" />
@@ -93,37 +74,26 @@ export function AuthForm(props: AuthFormProps) {
 
       {!isLogin ? (
         <div>
-          <label htmlFor="role" className="block text-sm font-medium text-zinc-800">
-            Стартовая роль
-          </label>
-          <select
-            id="role"
-            name="role"
-            defaultValue="ORGANIZER"
-            className="mt-2 h-11 w-full rounded-md border border-zinc-300 bg-white px-3 text-zinc-950 outline-none transition focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
-          >
+          <Label htmlFor="role">Стартовая роль</Label>
+          <Select id="role" name="role" defaultValue="ORGANIZER">
             <option value="ORGANIZER">Организатор</option>
             <option value="PARTICIPANT">Участник</option>
-          </select>
+          </Select>
           <FieldError fieldErrors={state.fieldErrors} name="role" />
         </div>
       ) : null}
 
       {state.message ? (
-        <p className={state.ok ? "text-sm text-emerald-700" : "text-sm text-red-700"}>{state.message}</p>
+        <p className={state.ok ? "text-sm text-pale-green-ink" : "text-sm text-pale-red-ink"}>{state.message}</p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="h-11 w-full rounded-md bg-emerald-700 px-5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-600"
-      >
+      <Button type="submit" size="lg" disabled={isPending} className="w-full">
         {isPending ? "Отправка..." : isLogin ? "Войти" : "Зарегистрироваться"}
-      </button>
+      </Button>
 
-      <p className="text-center text-sm text-zinc-600">
+      <p className="text-center text-sm text-muted">
         {isLogin ? "Нет аккаунта?" : "Уже есть аккаунт?"}{" "}
-        <Link href={isLogin ? "/register" : "/login"} className="font-medium text-emerald-800">
+        <Link href={isLogin ? "/register" : "/login"} className="font-medium text-ink underline underline-offset-4">
           {isLogin ? "Регистрация" : "Войти"}
         </Link>
       </p>

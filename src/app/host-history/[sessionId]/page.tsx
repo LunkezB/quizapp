@@ -108,55 +108,56 @@ export default async function HostHistoryDetailPage({ params }: HostHistoryDetai
   const questionStats = [...questionStatsById.values()].sort((a, b) => a.order - b.order);
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-canvas">
       <AppHeader user={user} />
 
-      <div className="mx-auto w-full max-w-4xl space-y-8 px-6 py-8">
-        <div>
-          <Link href="/host-history" prefetch={false} className="text-sm font-medium text-emerald-800">
+      <div className="mx-auto w-full max-w-4xl space-y-10 px-6 py-12">
+        <div className="fade-up">
+          <Link href="/host-history" prefetch={false} className="text-sm font-medium text-muted transition-colors hover:text-ink">
             ← Назад к проведённым играм
           </Link>
-          <h1 className="mt-3 text-3xl font-semibold text-zinc-950">{session.quiz.title}</h1>
-          <p className="mt-1 text-sm text-zinc-600">
+          <h1 className="mt-3 font-display text-3xl text-ink sm:text-4xl">{session.quiz.title}</h1>
+          <p className="mt-2 text-sm text-muted">
             Код {session.code} · {session.endedAt ? new Date(session.endedAt).toLocaleString("ru-RU") : ""}
           </p>
         </div>
 
-        <section className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="text-xl font-semibold text-zinc-950">Финальный лидерборд</h2>
+        <section className="rounded-[12px] border border-line bg-surface p-6 shadow-soft sm:p-8">
+          <h2 className="text-xl font-semibold tracking-tight text-ink">Финальный лидерборд</h2>
           <ol className="mt-4 space-y-2">
             {leaderboard.map((participant) => (
               <li
                 key={participant.id}
-                className="flex items-center justify-between rounded-md bg-zinc-50 px-4 py-2 text-sm"
+                className={`flex items-center justify-between rounded-[8px] px-4 py-2.5 text-sm ${
+                  participant.rank === 1 ? "bg-pale-yellow text-pale-yellow-ink" : "bg-surface-muted text-ink"
+                }`}
               >
                 <span>
-                  #{participant.rank} {participant.nickname}
-                  {participant.rank === 1 ? " 🏆" : ""}
+                  <span className="font-mono text-faint">#{participant.rank}</span> {participant.nickname}
                 </span>
-                <span className="font-semibold">{participant.totalScore}</span>
+                <span className="font-semibold tabular-nums">{participant.totalScore}</span>
               </li>
             ))}
           </ol>
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-xl font-semibold text-zinc-950">Статистика по вопросам</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-ink">Статистика по вопросам</h2>
 
           {questionStats.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-zinc-300 bg-white p-6">
-              <p className="text-sm text-zinc-600">Нет данных по ответам.</p>
+            <div className="rounded-[12px] border border-dashed border-line-strong bg-surface p-6">
+              <p className="text-sm text-muted">Нет данных по ответам.</p>
             </div>
           ) : (
             questionStats.map((stat, index) => {
               const ratio = stat.totalAnswered > 0 ? Math.round((stat.correctCount / stat.totalAnswered) * 100) : 0;
 
               return (
-                <div key={stat.questionId} className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
-                  <p className="text-sm font-medium text-zinc-600">Вопрос {index + 1}</p>
-                  <h3 className="mt-1 text-lg font-semibold text-zinc-950">{stat.text}</h3>
-                  <p className="mt-2 text-sm text-zinc-600">
-                    Правильно ответили: <span className="font-semibold text-zinc-950">{stat.correctCount}</span> из{" "}
+                <div key={stat.questionId} className="rounded-[12px] border border-line bg-surface p-6 shadow-soft">
+                  <p className="text-sm font-medium text-muted">Вопрос {index + 1}</p>
+                  <h3 className="mt-1 text-lg font-semibold tracking-tight text-ink">{stat.text}</h3>
+                  <p className="mt-2 text-sm text-muted">
+                    Правильно ответили: <span className="font-semibold text-ink">{stat.correctCount}</span> из{" "}
                     {stat.totalAnswered} ответивших ({ratio}%) · {stat.totalParticipants} участников
                   </p>
 
@@ -164,12 +165,14 @@ export default async function HostHistoryDetailPage({ params }: HostHistoryDetai
                     {stat.breakdown.map((option) => (
                       <div
                         key={option.optionId}
-                        className={`flex items-center justify-between rounded-md border p-3 text-sm ${
-                          option.isCorrect ? "border-emerald-600 bg-emerald-50" : "border-zinc-200 bg-zinc-50"
+                        className={`flex items-center justify-between rounded-[8px] border p-3 text-sm ${
+                          option.isCorrect
+                            ? "border-pale-green-ink/30 bg-pale-green text-pale-green-ink"
+                            : "border-line bg-surface-muted text-ink-soft"
                         }`}
                       >
                         <span>{option.text}</span>
-                        <span className="font-semibold">{option.count}</span>
+                        <span className="font-semibold tabular-nums">{option.count}</span>
                       </div>
                     ))}
                   </div>
