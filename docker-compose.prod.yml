@@ -1,16 +1,3 @@
-# Production compose file. Run it with the production env file explicitly,
-# so the same file drives both variable substitution below (--env-file) and
-# the app container's actual process environment (env_file:):
-#
-#   docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
-#
-# See deploy/DEPLOY.md for the full runbook.
-#
-# Explicit project name: without it, Compose derives the project name from
-# the directory ("quizapp"), same as docker-compose.yml (dev) — the two
-# would then fight over the same `postgres` service/container slot the
-# instant both get `up`'d from this repo on one machine (recreates the
-# other's container; the named data volume itself is untouched either way).
 name: quizapp-prod
 
 services:
