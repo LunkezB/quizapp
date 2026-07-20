@@ -82,14 +82,14 @@ npm run dev
 
 ## Игровая сессия в реальном времени
 
-Полный протокол socket-событий и payload'ов — в
-[`docs/realtime-protocol.md`](docs/realtime-protocol.md). Как сыграть:
+Полный протокол socket-событий и payload'ов описан в `docs/realtime-protocol.md`
+(локальный файл для разработки, не в git — см. раздел «Структура»). Как сыграть:
 
 1. Организатор открывает свой квиз (`/quiz/[id]/edit`) и жмёт **Запустить**
    (кнопка активна только если в квизе есть хотя бы один вопрос). Открывается
    `/host/[code]` с крупным 6-символьным кодом комнаты (без похожих символов
    `O`/`0`/`I`/`1`).
-2. Каждый участник открывает **Подключиться к игре** в шапке (`/join`),
+2. Каждый участник открывает **Подключиться** в шапке (`/join`),
    вводит код и никнейм для этой игры → попадает в `/play/[code]`. Участники
    появляются в лобби хоста мгновенно.
 3. Когда в лобби есть хотя бы один участник, хост жмёт **Start** — начинается
@@ -108,6 +108,24 @@ npm run dev
 RoomState>` в `src/server/game-store.ts`, общий и для Server Actions, и для
 socket-обработчиков через `globalThis`); в Postgres пишутся жизненный цикл
 сессии и все ответы участников — на этих данных построена история игр ниже.
+
+## Продакшн-деплой
+
+Полный пошаговый runbook — в [`deploy/DEPLOY.md`](deploy/DEPLOY.md):
+Docker Compose (`docker-compose.prod.yml` + многоступенчатый `Dockerfile`),
+reverse-proxy nginx с проксированием WebSocket (`deploy/nginx/`), выпуск
+TLS-сертификата через certbot, обновление версии, откат, альтернатива без
+Docker через systemd (`deploy/systemd/quizapp.service`).
+
+- `GET /api/health` — реализован прямо в `server.ts`, отдаёт `200
+  {"status":"ok","db":"ok",...}`, если процесс жив и Postgres отвечает,
+  иначе `503`. Используется Docker `HEALTHCHECK` и `docker compose`.
+- Продакшн-переменные окружения — шаблон в `.env.production.example`
+  (копируется в `.env.production`, не коммитится).
+- В проде, как и в dev, работает единственный процесс `server.ts`:
+  serverless/Vercel не подходит — WebSocket-соединениям нужен постоянный
+  процесс, а игровое состояние живёт в памяти и не переживает рестарт
+  контейнера (подробнее — в `deploy/DEPLOY.md`).
 
 ## История игр (личный кабинет)
 
@@ -131,15 +149,6 @@ socket-обработчиков через `globalThis`); в Postgres пишут
   тем же порядком, что и во время игры на живом лидерборде (см.
   `rankParticipants` в `src/lib/history-queries.ts`), чтобы историческое
   место всегда совпадало с тем, что участник видел в конце игры.
-
-## Полезные команды
-
-```bash
-npm run lint
-npm run format:check
-npm run build
-npm run prisma:generate
-```
 
 ## Структура
 
@@ -166,8 +175,15 @@ npm run prisma:generate
 - `src/components/host-game-client.tsx`, `play-game-client.tsx` - клиентские
   компоненты экрана хоста/участника (сокет-подключение, рендер состояния).
 - `src/components/socket-status.tsx` - клиентская проверка socket ping/pong.
+- `src/components/ui/` - переиспользуемые presentational-компоненты
+  (Button, Card, Badge, Field, Reveal) для единого визуального языка.
 - `prisma/schema.prisma` - доменная модель MVP.
 - `prisma/seed.ts` - сид категорий квизов.
-- `docker-compose.yml` - локальный PostgreSQL.
-- `docs/realtime-protocol.md` - полный протокол socket-событий и payload'ов.
-- `docs/` - ADR и UX-спецификация.
+- `docker-compose.yml` - локальный PostgreSQL для разработки.
+- `Dockerfile`, `docker-compose.prod.yml` - продакшн-сборка приложения и
+  стек (app + Postgres) для деплоя.
+- `deploy/` - runbook (`DEPLOY.md`), entrypoint-скрипт с миграциями,
+  конфиг nginx (reverse proxy + WebSocket), systemd-юнит как альтернатива
+  Docker.
+- `docs/` - ADR, протокол socket-событий и UX-спецификация; хранятся
+  локально для разработки, в git не отслеживаются (см. `.gitignore`).
