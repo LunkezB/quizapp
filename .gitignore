@@ -49,3 +49,6 @@ next-env.d.ts
 .claude/
 .vscode/
 .idea/
+
+# local-only docs (kept on disk, not tracked in git)
+/docs/
