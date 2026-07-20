@@ -38,7 +38,7 @@ docker compose up -d
 cp .env.example .env
 ```
 
-1. Применить миграции:
+4. Применить миграции:
 
 ```bash
 npm run prisma:migrate
