@@ -48,7 +48,7 @@ export default async function DashboardPage() {
         <section className="fade-up">
           <div className="mb-6">
             <h1 className="font-display text-3xl text-ink sm:text-4xl">Мои квизы</h1>
-            <p className="mt-2 text-sm text-muted">Создание и редактирование контента без игровой логики.</p>
+            <p className="mt-2 text-sm text-muted">Создание и редактирование квизов и вопросов.</p>
           </div>
 
           {quizzes.length === 0 ? (

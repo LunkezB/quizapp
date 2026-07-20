@@ -20,11 +20,11 @@ export default async function Home() {
         <Reveal className="max-w-3xl space-y-6">
           <p className="font-mono text-xs uppercase tracking-[0.18em] text-muted">QuizApp</p>
           <h1 className="font-display text-5xl text-ink sm:text-6xl">
-            Квиз в реальном времени для любой компании
+            Квиз в реальном времени
           </h1>
           <p className="max-w-2xl text-lg leading-8 text-muted">
-            Организатор создаёт квиз и запускает игру, участники подключаются с телефона по коду — и отвечают
-            на вопросы синхронно, в реальном времени.
+            Организатор создаёт квиз и запускает игру, участники подключаются с телефона по коду и отвечают
+            на вопросы синхронно.
           </p>
 
           <div className="flex flex-wrap gap-3 pt-2">
